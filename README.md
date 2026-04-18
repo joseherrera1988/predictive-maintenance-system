@@ -14,11 +14,11 @@ This project builds an end-to-end machine learning system to predict equipment f
 Python, Pandas, Scikit-learn, PyTorch, Streamlit
 
 ## Results
-| Model          | ROC-AUC | Recall |
-|----------------|--------|--------|
-| Random Forest  | 0.87   | 0.81   |
-| XGBoost        | 0.89   | 0.84   |
-| LSTM           | 0.91   | 0.86   |
+| Model         | ROC-AUC | Precision | Recall |
+|---------------|--------|-----------|--------|
+| Random Forest | 0.XX   | 0.XX      | 0.XX   |
+| XGBoost       | 0.XX   | 0.XX      | 0.XX   |
+| LSTM          | 0.XX   | 0.XX      | 0.XX   |
 
 ## Dashboard
 ![Dashboard](assets/dashboard.png)
