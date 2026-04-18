@@ -1,4 +1,3 @@
-# predictive-maintenance-system
 # Predictive Maintenance System for Industrial Equipment
 
 ## Overview
