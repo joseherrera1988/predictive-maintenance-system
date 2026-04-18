@@ -1,0 +1,46 @@
+project:
+  name: predictive-maintenance-ai
+  version: "1.0.0"
+  seed: 42
+
+data:
+  raw_path: data/raw
+  processed_path: data/processed
+  test_size: 0.2
+  val_size: 0.1
+
+features:
+  target_column: failure
+  drop_columns: []
+  categorical_columns: []
+  numerical_columns: []
+
+ml_model:
+  type: random_forest
+  params:
+    n_estimators: 100
+    max_depth: 10
+    random_state: 42
+
+dl_model:
+  type: lstm
+  params:
+    hidden_size: 64
+    num_layers: 2
+    dropout: 0.2
+    epochs: 50
+    batch_size: 32
+    learning_rate: 0.001
+
+evaluation:
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1
+    - roc_auc
+
+tracking:
+  experiments_path: experiments/logs.csv
+  models_path: models/saved_models
+  metadata_path: models/metadata.json
