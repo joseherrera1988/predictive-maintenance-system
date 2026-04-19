@@ -46,8 +46,10 @@ streamlit run dashboards/streamlit_app.py
 
 | Flag | Options | Description |
 |------|---------|-------------|
-| `--data` | filename | CSV in `data/raw/` |
-| `--model` | `ml`, `dl`, `both` | Model type to train |
+| `--train` | filename | Path to train txt file |
+| `--test` | filename | Path to test txt file |
+| `--rul` | filename | Path to RUL txt file |
+| `--model` | `ml`, `dl`, `xgb`, `all` | `ml`=Random Forest, `dl`=LSTM, `xgb`=XGBoost, `all`=run all three |
 
 ## Results
 

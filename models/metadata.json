@@ -84,6 +84,11 @@
       "name": "lstm_rul_fd001",
       "path": "models\\saved_models\\lstm_rul_fd001_20260419_054138.pkl",
       "saved_at": "20260419_054138"
+    },
+    {
+      "name": "xgb_rul_fd001",
+      "path": "models\\saved_models\\xgb_rul_fd001_20260419_060520.pkl",
+      "saved_at": "20260419_060520"
     }
   ]
 }
