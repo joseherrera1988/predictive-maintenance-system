@@ -2,7 +2,7 @@
 
 Failure threshold: RUL ≤ 30 cycles. All models evaluated on NASA CMAPSS FD001–FD004.
 
-## Recall (primary metric)
+## Recall 
 "Of all actual failures, how many did we catch?"
 
 | Dataset | RF     | XGBoost | LSTM   |
