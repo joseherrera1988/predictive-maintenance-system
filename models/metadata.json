@@ -1,3 +1,14 @@
 {
-  "models": []
+  "models": [
+    {
+      "name": "rf_rul_fd001",
+      "path": "models\\saved_models\\rf_rul_fd001_20260419_002218.pkl",
+      "saved_at": "20260419_002218"
+    },
+    {
+      "name": "rf_rul_fd001",
+      "path": "models\\saved_models\\rf_rul_fd001_20260419_002300.pkl",
+      "saved_at": "20260419_002300"
+    }
+  ]
 }
