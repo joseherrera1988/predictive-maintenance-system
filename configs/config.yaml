@@ -39,6 +39,8 @@ evaluation:
     - recall
     - f1
     - roc_auc
+    - confusion_matrix
+  failure_threshold: 30
 
 tracking:
   experiments_path: experiments/logs.csv

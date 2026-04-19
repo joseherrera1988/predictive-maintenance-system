@@ -24,6 +24,21 @@
       "name": "rf_rul_fd001",
       "path": "models\\saved_models\\rf_rul_fd001_20260419_020214.pkl",
       "saved_at": "20260419_020214"
+    },
+    {
+      "name": "rf_rul_fd001",
+      "path": "models\\saved_models\\rf_rul_fd001_20260419_021942.pkl",
+      "saved_at": "20260419_021942"
+    },
+    {
+      "name": "xgb_rul_fd001",
+      "path": "models\\saved_models\\xgb_rul_fd001_20260419_021951.pkl",
+      "saved_at": "20260419_021951"
+    },
+    {
+      "name": "lstm_rul_fd001",
+      "path": "models\\saved_models\\lstm_rul_fd001_20260419_024656.pkl",
+      "saved_at": "20260419_024656"
     }
   ]
 }

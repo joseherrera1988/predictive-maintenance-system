@@ -9,6 +9,7 @@ from xgboost import XGBRegressor
 
 from src.cmapss_loader import load_train, load_test, get_feature_columns
 from src.evaluate_regression import evaluate_regression
+from src.evaluate_failure import evaluate_failure, print_failure_metrics
 from src.model_utils import save_model
 from src.tracker import log_experiment
 
@@ -60,6 +61,9 @@ def train(
     print(f"  MAE        : {metrics['mae']}")
     print(f"  R²         : {metrics['r2']}")
     print(f"  NASA Score : {metrics['nasa_score']}")
+
+    cls_metrics = evaluate_failure(y_test, y_pred)
+    print_failure_metrics(cls_metrics)
 
     save_model(model, "xgb_rul_fd001")
     log_experiment("xgboost_regressor", params, metrics, notes="CMAPSS FD001")
