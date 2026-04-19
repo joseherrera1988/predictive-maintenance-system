@@ -1,45 +1,24 @@
 """
-LSTM regressor for CMAPSS RUL prediction using a sliding window approach.
+LSTM regressor for CMAPSS RUL prediction using TensorFlow/Keras.
 
 Each sample is a window of W consecutive cycles for one engine.
 The target is the RUL at the last timestep of that window.
 """
 
 import numpy as np
-import pandas as pd
-import torch
-import torch.nn as nn
-from torch.utils.data import DataLoader, TensorDataset
 from sklearn.preprocessing import StandardScaler
 
-from src.cmapss_loader import load_train, load_test, get_feature_columns
+from src.cmapss_loader import load_train, load_test, get_feature_columns, _read_txt, DROP_SENSORS
 from src.evaluate_regression import evaluate_regression
 from src.model_utils import save_model
 from src.tracker import log_experiment
 
-
 WINDOW = 30  # cycles per sequence
-
-
-# ── Model ──────────────────────────────────────────────────────────────────────
-class LSTMRegressor(nn.Module):
-    def __init__(self, input_size: int, hidden_size: int, num_layers: int, dropout: float):
-        super().__init__()
-        self.lstm = nn.LSTM(
-            input_size, hidden_size, num_layers,
-            batch_first=True,
-            dropout=dropout if num_layers > 1 else 0.0,
-        )
-        self.fc = nn.Linear(hidden_size, 1)
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        _, (hn, _) = self.lstm(x)
-        return self.fc(hn[-1]).squeeze(-1)
 
 
 # ── Windowing ──────────────────────────────────────────────────────────────────
 def _make_sequences(
-    df: pd.DataFrame,
+    df,
     feat_cols: list[str],
     window: int,
 ) -> tuple[np.ndarray, np.ndarray]:
@@ -48,6 +27,7 @@ def _make_sequences(
     Pads with zeros at the start when fewer than `window` cycles exist.
     Returns X of shape (N, window, features) and y of shape (N,).
     """
+    import pandas as pd
     X_list, y_list = [], []
     for _, group in df.groupby("unit_id"):
         feats = group[feat_cols].values
@@ -66,13 +46,13 @@ def _make_sequences(
 
 
 def _last_window_per_engine(
-    df: pd.DataFrame,
+    df,
     feat_cols: list[str],
     window: int,
     scaler: StandardScaler,
 ) -> np.ndarray:
     """
-    For test data: one window per engine (the last `window` cycles).
+    For test data: one window per engine using the last `window` cycles.
     Returns X of shape (n_engines, window, features).
     """
     X_list = []
@@ -99,9 +79,12 @@ def train(
     batch_size: int = 256,
     lr: float = 0.001,
     random_state: int = 42,
-) -> LSTMRegressor:
+):
+    import tensorflow as tf
+    from tensorflow import keras
 
-    torch.manual_seed(random_state)
+    tf.random.set_seed(random_state)
+    np.random.seed(random_state)
 
     # ── Load ───────────────────────────────────────────────────────────────────
     train_df = load_train(train_path)
@@ -115,48 +98,43 @@ def train(
     # ── Build sequences ────────────────────────────────────────────────────────
     X_train, y_train = _make_sequences(train_df, feat_cols, WINDOW)
 
-    # Test: load raw, scale with training scaler, take last window per engine
-    from src.cmapss_loader import _read_txt, DROP_SENSORS
     raw_test = _read_txt(test_path).drop(columns=DROP_SENSORS)
     X_test = _last_window_per_engine(raw_test, feat_cols, WINDOW, scaler)
     y_test = test_df["RUL"].values.astype(np.float32)
 
-    # ── DataLoader ─────────────────────────────────────────────────────────────
-    dataset = TensorDataset(
-        torch.from_numpy(X_train),
-        torch.from_numpy(y_train),
-    )
-    loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
-
-    # ── Model ──────────────────────────────────────────────────────────────────
+    # ── Build model ────────────────────────────────────────────────────────────
     input_size = X_train.shape[2]
-    model = LSTMRegressor(input_size, hidden_size, num_layers, dropout)
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    criterion = nn.MSELoss()
+    inputs = keras.Input(shape=(WINDOW, input_size))
+    x = inputs
+    for i in range(num_layers):
+        return_sequences = i < num_layers - 1
+        x = keras.layers.LSTM(hidden_size, return_sequences=return_sequences)(x)
+        if dropout > 0:
+            x = keras.layers.Dropout(dropout)(x)
+    outputs = keras.layers.Dense(1)(x)
+    model = keras.Model(inputs, outputs)
 
-    # ── Train loop ─────────────────────────────────────────────────────────────
-    model.train()
-    for epoch in range(1, epochs + 1):
-        epoch_loss = 0.0
-        for xb, yb in loader:
-            optimizer.zero_grad()
-            preds = model(xb)
-            loss = criterion(preds, yb)
-            loss.backward()
-            optimizer.step()
-            epoch_loss += loss.item() * len(xb)
-        if epoch % 10 == 0:
-            print(f"  Epoch {epoch:3d}/{epochs}  loss={epoch_loss/len(X_train):.4f}")
+    model.compile(
+        optimizer=keras.optimizers.Adam(learning_rate=lr),
+        loss="mse",
+    )
+    model.summary()
+
+    # ── Train ──────────────────────────────────────────────────────────────────
+    history = model.fit(
+        X_train, y_train,
+        epochs=epochs,
+        batch_size=batch_size,
+        validation_split=0.1,
+        verbose=1,
+    )
 
     # ── Evaluate ───────────────────────────────────────────────────────────────
-    model.eval()
-    with torch.no_grad():
-        y_pred = model(torch.from_numpy(X_test)).numpy()
-
+    y_pred = model.predict(X_test, verbose=0).flatten()
     y_pred = np.clip(y_pred, 0, None)
     metrics = evaluate_regression(y_test, y_pred)
 
-    print("\n[DL] LSTM Regressor — FD001 Results")
+    print("\n[DL] LSTM Regressor (Keras) — FD001 Results")
     print(f"  RMSE       : {metrics['rmse']}")
     print(f"  MAE        : {metrics['mae']}")
     print(f"  R²         : {metrics['r2']}")
@@ -173,6 +151,6 @@ def train(
         "window": WINDOW,
     }
     save_model(model, "lstm_rul_fd001")
-    log_experiment("lstm_regressor", params, metrics, notes="CMAPSS FD001")
+    log_experiment("lstm_regressor_keras", params, metrics, notes="CMAPSS FD001")
 
     return model

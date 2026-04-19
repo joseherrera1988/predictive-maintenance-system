@@ -9,6 +9,21 @@
       "name": "rf_rul_fd001",
       "path": "models\\saved_models\\rf_rul_fd001_20260419_002300.pkl",
       "saved_at": "20260419_002300"
+    },
+    {
+      "name": "lstm_rul_fd001",
+      "path": "models\\saved_models\\lstm_rul_fd001_20260419_015119.pkl",
+      "saved_at": "20260419_015119"
+    },
+    {
+      "name": "xgb_rul_fd001",
+      "path": "models\\saved_models\\xgb_rul_fd001_20260419_020102.pkl",
+      "saved_at": "20260419_020102"
+    },
+    {
+      "name": "rf_rul_fd001",
+      "path": "models\\saved_models\\rf_rul_fd001_20260419_020214.pkl",
+      "saved_at": "20260419_020214"
     }
   ]
 }
