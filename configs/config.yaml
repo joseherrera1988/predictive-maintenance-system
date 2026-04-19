@@ -46,3 +46,8 @@ tracking:
   experiments_path: experiments/logs.csv
   models_path: models/saved_models
   metadata_path: models/metadata.json
+
+cv:
+  n_folds: 5
+  cv_epochs: 20
+  random_state: 42
