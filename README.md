@@ -53,7 +53,7 @@ streamlit run dashboards/streamlit_app.py
 
 Evaluated on NASA CMAPSS FD001–FD004. Failure threshold: RUL ≤ 30 cycles.
 
-### Recall (primary metric)
+### Recall
 | Dataset | RF     | XGBoost | LSTM   |
 |---------|--------|---------|--------|
 | FD001   | 0.68   | 0.72    | **0.80** |
