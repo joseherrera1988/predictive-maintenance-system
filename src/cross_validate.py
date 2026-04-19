@@ -4,9 +4,12 @@ Group K-Fold cross-validation wrappers for RF, XGBoost, and LSTM.
 Splits engines (unit_id) into k folds; trains on k-1 groups, validates on 1.
 Preserves temporal structure within each engine's cycle history.
 
+Validation uses ALL cycles from held-out engines (not just the last cycle).
+This ensures both failure and non-failure classes are present in each fold,
+making precision and ROC-AUC well-defined.
+
 Per fold:
   - StandardScaler is fit on the train fold only (no leakage)
-  - Validation uses the last cycle per engine (RF/XGBoost) or last window (LSTM)
   - evaluate_failure() converts RUL predictions to binary failure labels
   - Per-sample binary predictions are stored for McNemar test
 """
@@ -19,7 +22,6 @@ from xgboost import XGBRegressor
 
 from src.cmapss_loader import get_feature_columns, load_train
 from src.evaluate_failure import evaluate_failure
-from src.train_dl_rul import WINDOW, _last_window_per_engine, _make_sequences
 
 FAILURE_THRESHOLD = 30
 
@@ -54,9 +56,9 @@ def cv_random_forest(
         X_train = scaler.fit_transform(fold_train[feat_cols])
         y_train = fold_train["RUL"].values
 
-        fold_val_last = fold_val.groupby("unit_id").last().reset_index()
-        X_val = scaler.transform(fold_val_last[feat_cols])
-        y_val = fold_val_last["RUL"].values
+        # Evaluate on ALL cycles of validation engines (both classes present)
+        X_val = scaler.transform(fold_val[feat_cols])
+        y_val = fold_val["RUL"].values
 
         model = RandomForestRegressor(
             n_estimators=n_estimators,
@@ -111,9 +113,8 @@ def cv_xgboost(
         X_train = scaler.fit_transform(fold_train[feat_cols])
         y_train = fold_train["RUL"].values
 
-        fold_val_last = fold_val.groupby("unit_id").last().reset_index()
-        X_val = scaler.transform(fold_val_last[feat_cols])
-        y_val = fold_val_last["RUL"].values
+        X_val = scaler.transform(fold_val[feat_cols])
+        y_val = fold_val["RUL"].values
 
         model = XGBRegressor(
             n_estimators=n_estimators,
@@ -157,8 +158,14 @@ def cv_lstm(
     lr: float = 0.001,
     random_state: int = 42,
 ) -> dict:
-    import tensorflow as tf
-    from tensorflow import keras
+    try:
+        import tensorflow as tf
+        from tensorflow import keras
+    except (ImportError, ModuleNotFoundError) as e:
+        print(f"  [LSTM] Skipping -- TensorFlow not available on this platform: {e}")
+        return None
+
+    from src.train_dl_rul import WINDOW, _make_sequences
 
     tf.random.set_seed(random_state)
     np.random.seed(random_state)
@@ -177,12 +184,11 @@ def cv_lstm(
 
         scaler = StandardScaler()
         fold_train[feat_cols] = scaler.fit_transform(fold_train[feat_cols])
+        fold_val[feat_cols] = scaler.transform(fold_val[feat_cols])
 
+        # Use all windows from both train and val folds
         X_train_seq, y_train_seq = _make_sequences(fold_train, feat_cols, WINDOW)
-
-        # Last window per validation engine; y = last RUL per engine
-        X_val_seq = _last_window_per_engine(fold_val, feat_cols, WINDOW, scaler)
-        y_val = fold_val.groupby("unit_id")["RUL"].last().values.astype(np.float32)
+        X_val_seq, y_val_seq = _make_sequences(fold_val, feat_cols, WINDOW)
 
         input_size = X_train_seq.shape[2]
         inputs = keras.Input(shape=(WINDOW, input_size))
@@ -199,11 +205,11 @@ def cv_lstm(
 
         y_pred = np.clip(model.predict(X_val_seq, verbose=0).flatten(), 0, None)
 
-        m = evaluate_failure(y_val, y_pred)
+        m = evaluate_failure(y_val_seq, y_pred)
         precision_scores.append(m["precision"])
         roc_auc_scores.append(m["roc_auc"])
 
-        y_true_bin, y_pred_bin = _binarize(y_val, y_pred)
+        y_true_bin, y_pred_bin = _binarize(y_val_seq, y_pred)
         all_y_true_bin.extend(y_true_bin.tolist())
         all_y_pred_bin.extend(y_pred_bin.tolist())
 

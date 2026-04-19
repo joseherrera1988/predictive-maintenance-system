@@ -1,0 +1,146 @@
+Statistical Significance Analysis -- Predictive Maintenance System
+Datasets: FD001, FD002, FD003, FD004  |  CV folds: 5  |  LSTM cv-epochs: 20
+
+================================================================
+Dataset: FD001  |  5-fold Group CV  |  alpha=0.05
+================================================================
+  [LSTM] Skipped -- TensorFlow not available on this platform.
+
+-- PRECISION --
+  Model           Mean       Std  Per-fold scores
+  RF            0.9215    0.0227  [0.8854  0.9183  0.9469  0.9299  0.9269]
+  XGBoost       0.9002    0.0369  [0.8442  0.8919  0.9436  0.9027  0.9188]
+
+  Friedman: skipped (requires 3+ models)
+
+  Pairwise Wilcoxon (Bonferroni k=1):
+    RF vs XGBoost     W=  0.0  p=0.0625  p_corr=0.0625   r=+1.000
+
+  Paired t-test (Bonferroni k=1) [assumes normality]:
+    RF vs XGBoost     t=+3.0737  p=0.0372  p_corr=0.0372*
+
+-- ROC_AUC --
+  Model           Mean       Std  Per-fold scores
+  RF            0.9878    0.0027  [0.9855  0.9873  0.9896  0.9850  0.9914]
+  XGBoost       0.9875    0.0030  [0.9850  0.9870  0.9898  0.9844  0.9912]
+
+  Friedman: skipped (requires 3+ models)
+
+  Pairwise Wilcoxon (Bonferroni k=1):
+    RF vs XGBoost     W=  1.5  p=0.1875  p_corr=0.1875   r=+0.800
+
+  Paired t-test (Bonferroni k=1) [assumes normality]:
+    RF vs XGBoost     t=+2.0103  p=0.1148  p_corr=0.1148 
+
+-- McNemar (pooled per-sample predictions across 5 folds) --
+  RF vs XGBoost     chi2= 0.1348  p=0.7135   (n10=137 RF-right-XGBoost-wrong  n01=130 RF-wrong-XGBoost-right)
+
+  Note: * = p < 0.05.  With 5 folds, power is limited -- non-significant results do not prove equivalence.
+
+================================================================
+Dataset: FD002  |  5-fold Group CV  |  alpha=0.05
+================================================================
+  [LSTM] Skipped -- TensorFlow not available on this platform.
+
+-- PRECISION --
+  Model           Mean       Std  Per-fold scores
+  RF            0.9085    0.0187  [0.8927  0.9381  0.9058  0.9131  0.8929]
+  XGBoost       0.8883    0.0157  [0.8733  0.9119  0.8881  0.8935  0.8748]
+
+  Friedman: skipped (requires 3+ models)
+
+  Pairwise Wilcoxon (Bonferroni k=1):
+    RF vs XGBoost     W=  0.0  p=0.0625  p_corr=0.0625   r=+1.000
+
+  Paired t-test (Bonferroni k=1) [assumes normality]:
+    RF vs XGBoost     t=+13.0855  p=0.0002  p_corr=0.0002*
+
+-- ROC_AUC --
+  Model           Mean       Std  Per-fold scores
+  RF            0.9844    0.0025  [0.9828  0.9884  0.9851  0.9829  0.9826]
+  XGBoost       0.9844    0.0024  [0.9824  0.9881  0.9853  0.9829  0.9831]
+
+  Friedman: skipped (requires 3+ models)
+
+  Pairwise Wilcoxon (Bonferroni k=1):
+    RF vs XGBoost     W=  5.0  p=1.0000  p_corr=1.0000   r=+0.333
+
+  Paired t-test (Bonferroni k=1) [assumes normality]:
+    RF vs XGBoost     t=+0.0000  p=1.0000  p_corr=1.0000 
+
+-- McNemar (pooled per-sample predictions across 5 folds) --
+  RF vs XGBoost     chi2= 2.2538  p=0.1333   (n10=407 RF-right-XGBoost-wrong  n01=452 RF-wrong-XGBoost-right)
+
+  Note: * = p < 0.05.  With 5 folds, power is limited -- non-significant results do not prove equivalence.
+
+================================================================
+Dataset: FD003  |  5-fold Group CV  |  alpha=0.05
+================================================================
+  [LSTM] Skipped -- TensorFlow not available on this platform.
+
+-- PRECISION --
+  Model           Mean       Std  Per-fold scores
+  RF            0.9150    0.0322  [0.9015  0.8978  0.9654  0.9269  0.8836]
+  XGBoost       0.9023    0.0350  [0.9010  0.8787  0.9584  0.9055  0.8680]
+
+  Friedman: skipped (requires 3+ models)
+
+  Pairwise Wilcoxon (Bonferroni k=1):
+    RF vs XGBoost     W=  0.0  p=0.0625  p_corr=0.0625   r=+1.000
+
+  Paired t-test (Bonferroni k=1) [assumes normality]:
+    RF vs XGBoost     t=+3.2499  p=0.0314  p_corr=0.0314*
+
+-- ROC_AUC --
+  Model           Mean       Std  Per-fold scores
+  RF            0.9909    0.0020  [0.9883  0.9907  0.9937  0.9920  0.9900]
+  XGBoost       0.9910    0.0018  [0.9886  0.9909  0.9936  0.9917  0.9903]
+
+  Friedman: skipped (requires 3+ models)
+
+  Pairwise Wilcoxon (Bonferroni k=1):
+    RF vs XGBoost     W=  4.5  p=0.5000  p_corr=0.5000   r=+0.400
+
+  Paired t-test (Bonferroni k=1) [assumes normality]:
+    RF vs XGBoost     t=-0.6667  p=0.5415  p_corr=0.5415 
+
+-- McNemar (pooled per-sample predictions across 5 folds) --
+  RF vs XGBoost     chi2= 0.2550  p=0.6136   (n10=130 RF-right-XGBoost-wrong  n01=121 RF-wrong-XGBoost-right)
+
+  Note: * = p < 0.05.  With 5 folds, power is limited -- non-significant results do not prove equivalence.
+
+================================================================
+Dataset: FD004  |  5-fold Group CV  |  alpha=0.05
+================================================================
+  [LSTM] Skipped -- TensorFlow not available on this platform.
+
+-- PRECISION --
+  Model           Mean       Std  Per-fold scores
+  RF            0.9065    0.0173  [0.8959  0.9288  0.9207  0.8986  0.8884]
+  XGBoost       0.8895    0.0187  [0.8765  0.9135  0.9042  0.8837  0.8695]
+
+  Friedman: skipped (requires 3+ models)
+
+  Pairwise Wilcoxon (Bonferroni k=1):
+    RF vs XGBoost     W=  0.0  p=0.0625  p_corr=0.0625   r=+1.000
+
+  Paired t-test (Bonferroni k=1) [assumes normality]:
+    RF vs XGBoost     t=+18.4826  p=0.0001  p_corr=0.0001*
+
+-- ROC_AUC --
+  Model           Mean       Std  Per-fold scores
+  RF            0.9874    0.0019  [0.9865  0.9899  0.9873  0.9885  0.9849]
+  XGBoost       0.9874    0.0022  [0.9862  0.9904  0.9882  0.9878  0.9846]
+
+  Friedman: skipped (requires 3+ models)
+
+  Pairwise Wilcoxon (Bonferroni k=1):
+    RF vs XGBoost     W=  7.0  p=1.0000  p_corr=1.0000   r=+0.067
+
+  Paired t-test (Bonferroni k=1) [assumes normality]:
+    RF vs XGBoost     t=-0.0680  p=0.9490  p_corr=0.9490 
+
+-- McNemar (pooled per-sample predictions across 5 folds) --
+  RF vs XGBoost     chi2=10.1402  p=0.0015*  (n10=452 RF-right-XGBoost-wrong  n01=554 RF-wrong-XGBoost-right)
+
+  Note: * = p < 0.05.  With 5 folds, power is limited -- non-significant results do not prove equivalence.
