@@ -51,3 +51,8 @@ cv:
   n_folds: 5
   cv_epochs: 20
   random_state: 42
+
+time_series_features:
+  windows: [5, 10, 20]
+  lags: [1, 5, 10]
+  ewm_span: 10

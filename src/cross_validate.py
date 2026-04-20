@@ -21,7 +21,9 @@ from sklearn.preprocessing import StandardScaler
 from xgboost import XGBRegressor
 
 from src.cmapss_loader import get_feature_columns, load_train
+from src.config import CONFIG
 from src.evaluate_failure import evaluate_failure
+from src.feature_engineering import add_time_series_features
 
 FAILURE_THRESHOLD = 30
 
@@ -41,11 +43,18 @@ def cv_random_forest(
     random_state: int = 42,
 ) -> dict:
     train_df = load_train(train_path)
+    _ts = CONFIG.get("time_series_features", {})
+    train_df = add_time_series_features(
+        train_df,
+        windows=tuple(_ts.get("windows", [5, 10, 20])),
+        lags=tuple(_ts.get("lags", [1, 5, 10])),
+        ewm_span=_ts.get("ewm_span", 10),
+    )
     feat_cols = get_feature_columns(train_df)
     groups = train_df["unit_id"].values
 
     gkf = GroupKFold(n_splits=n_folds)
-    precision_scores, roc_auc_scores = [], []
+    precision_scores, recall_scores, roc_auc_scores = [], [], []
     all_y_true_bin, all_y_pred_bin = [], []
 
     for fold_idx, (train_idx, val_idx) in enumerate(gkf.split(train_df, groups=groups)):
@@ -71,16 +80,18 @@ def cv_random_forest(
 
         m = evaluate_failure(y_val, y_pred)
         precision_scores.append(m["precision"])
+        recall_scores.append(m["recall"])
         roc_auc_scores.append(m["roc_auc"])
 
         y_true_bin, y_pred_bin = _binarize(y_val, y_pred)
         all_y_true_bin.extend(y_true_bin.tolist())
         all_y_pred_bin.extend(y_pred_bin.tolist())
 
-        print(f"  RF     fold {fold_idx+1}/{n_folds}: precision={m['precision']:.4f}  roc_auc={m['roc_auc']:.4f}")
+        print(f"  RF     fold {fold_idx+1}/{n_folds}: precision={m['precision']:.4f}  recall={m['recall']:.4f}  roc_auc={m['roc_auc']:.4f}")
 
     return {
         "precision": precision_scores,
+        "recall": recall_scores,
         "roc_auc": roc_auc_scores,
         "y_true_bin": all_y_true_bin,
         "y_pred_bin": all_y_pred_bin,
@@ -98,11 +109,18 @@ def cv_xgboost(
     random_state: int = 42,
 ) -> dict:
     train_df = load_train(train_path)
+    _ts = CONFIG.get("time_series_features", {})
+    train_df = add_time_series_features(
+        train_df,
+        windows=tuple(_ts.get("windows", [5, 10, 20])),
+        lags=tuple(_ts.get("lags", [1, 5, 10])),
+        ewm_span=_ts.get("ewm_span", 10),
+    )
     feat_cols = get_feature_columns(train_df)
     groups = train_df["unit_id"].values
 
     gkf = GroupKFold(n_splits=n_folds)
-    precision_scores, roc_auc_scores = [], []
+    precision_scores, recall_scores, roc_auc_scores = [], [], []
     all_y_true_bin, all_y_pred_bin = [], []
 
     for fold_idx, (train_idx, val_idx) in enumerate(gkf.split(train_df, groups=groups)):
@@ -131,16 +149,18 @@ def cv_xgboost(
 
         m = evaluate_failure(y_val, y_pred)
         precision_scores.append(m["precision"])
+        recall_scores.append(m["recall"])
         roc_auc_scores.append(m["roc_auc"])
 
         y_true_bin, y_pred_bin = _binarize(y_val, y_pred)
         all_y_true_bin.extend(y_true_bin.tolist())
         all_y_pred_bin.extend(y_pred_bin.tolist())
 
-        print(f"  XGBoost fold {fold_idx+1}/{n_folds}: precision={m['precision']:.4f}  roc_auc={m['roc_auc']:.4f}")
+        print(f"  XGBoost fold {fold_idx+1}/{n_folds}: precision={m['precision']:.4f}  recall={m['recall']:.4f}  roc_auc={m['roc_auc']:.4f}")
 
     return {
         "precision": precision_scores,
+        "recall": recall_scores,
         "roc_auc": roc_auc_scores,
         "y_true_bin": all_y_true_bin,
         "y_pred_bin": all_y_pred_bin,
@@ -175,7 +195,7 @@ def cv_lstm(
     groups = train_df["unit_id"].values
 
     gkf = GroupKFold(n_splits=n_folds)
-    precision_scores, roc_auc_scores = [], []
+    precision_scores, recall_scores, roc_auc_scores = [], [], []
     all_y_true_bin, all_y_pred_bin = [], []
 
     for fold_idx, (train_idx, val_idx) in enumerate(gkf.split(train_df, groups=groups)):
@@ -207,18 +227,20 @@ def cv_lstm(
 
         m = evaluate_failure(y_val_seq, y_pred)
         precision_scores.append(m["precision"])
+        recall_scores.append(m["recall"])
         roc_auc_scores.append(m["roc_auc"])
 
         y_true_bin, y_pred_bin = _binarize(y_val_seq, y_pred)
         all_y_true_bin.extend(y_true_bin.tolist())
         all_y_pred_bin.extend(y_pred_bin.tolist())
 
-        print(f"  LSTM   fold {fold_idx+1}/{n_folds}: precision={m['precision']:.4f}  roc_auc={m['roc_auc']:.4f}")
+        print(f"  LSTM   fold {fold_idx+1}/{n_folds}: precision={m['precision']:.4f}  recall={m['recall']:.4f}  roc_auc={m['roc_auc']:.4f}")
 
         keras.backend.clear_session()
 
     return {
         "precision": precision_scores,
+        "recall": recall_scores,
         "roc_auc": roc_auc_scores,
         "y_true_bin": all_y_true_bin,
         "y_pred_bin": all_y_pred_bin,

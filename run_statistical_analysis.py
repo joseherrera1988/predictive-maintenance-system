@@ -65,7 +65,7 @@ def _run_dataset(dataset: str, n_folds: int, cv_epochs: int) -> tuple:
     pairs = PAIRS_3 if "LSTM" in results else PAIRS_2
     n_pairs = len(pairs)
 
-    for metric in ("precision", "roc_auc"):
+    for metric in ("precision", "recall", "roc_auc"):
         scores = {m: results[m][metric] for m in active_models}
         summary = compute_summary(scores)
 

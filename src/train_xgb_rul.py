@@ -10,6 +10,8 @@ from xgboost import XGBRegressor
 from src.cmapss_loader import load_train, load_test, get_feature_columns
 from src.evaluate_regression import evaluate_regression
 from src.evaluate_failure import evaluate_failure, print_failure_metrics
+from src.feature_engineering import add_time_series_features
+from src.config import CONFIG
 from src.model_utils import save_model
 from src.tracker import log_experiment
 
@@ -29,11 +31,21 @@ def train(
     train_df = load_train(train_path)
     test_df = load_test(test_path, rul_path)
 
+    _ts = CONFIG.get("time_series_features", {})
+    train_df = add_time_series_features(
+        train_df,
+        windows=tuple(_ts.get("windows", [5, 10, 20])),
+        lags=tuple(_ts.get("lags", [1, 5, 10])),
+        ewm_span=_ts.get("ewm_span", 10),
+    )
     feat_cols = get_feature_columns(train_df)
 
     X_train = train_df[feat_cols].values
     y_train = train_df["RUL"].values
 
+    for col in feat_cols:
+        if col not in test_df.columns:
+            test_df[col] = 0.0
     X_test = test_df[feat_cols].values
     y_test = test_df["RUL"].values
 
