@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 
 from src.cross_validate import cv_lstm, cv_random_forest, cv_xgboost
+from src.nested_cv import nested_cv_random_forest, nested_cv_xgboost
 from src.statistical_tests import (
     compute_summary,
     friedman_test,
@@ -35,7 +36,7 @@ def _sig(p: float) -> str:
     return "*" if p < ALPHA else " "
 
 
-def _run_dataset(dataset: str, n_folds: int, cv_epochs: int) -> tuple:
+def _run_dataset(dataset: str, n_folds: int, cv_epochs: int, tuned: bool = False, n_trials: int = 50) -> tuple:
     train_path = DATASETS[dataset]
     lines = []
 
@@ -45,11 +46,16 @@ def _run_dataset(dataset: str, n_folds: int, cv_epochs: int) -> tuple:
     lines.append(f"Dataset: {dataset}  |  {n_folds}-fold Group CV  |  alpha={ALPHA}")
     lines.append(sep)
 
-    print(f"\n[{dataset}] Random Forest ({n_folds} folds)...")
-    rf = cv_random_forest(train_path, n_folds=n_folds)
-
-    print(f"\n[{dataset}] XGBoost ({n_folds} folds)...")
-    xgb = cv_xgboost(train_path, n_folds=n_folds)
+    if tuned:
+        print(f"\n[{dataset}] Random Forest — nested CV ({n_folds} outer folds, {n_trials} Optuna trials)...")
+        rf = nested_cv_random_forest(train_path, n_folds=n_folds, n_trials=n_trials)
+        print(f"\n[{dataset}] XGBoost — nested CV ({n_folds} outer folds, {n_trials} Optuna trials)...")
+        xgb = nested_cv_xgboost(train_path, n_folds=n_folds, n_trials=n_trials)
+    else:
+        print(f"\n[{dataset}] Random Forest ({n_folds} folds)...")
+        rf = cv_random_forest(train_path, n_folds=n_folds)
+        print(f"\n[{dataset}] XGBoost ({n_folds} folds)...")
+        xgb = cv_xgboost(train_path, n_folds=n_folds)
 
     print(f"\n[{dataset}] LSTM ({n_folds} folds, {cv_epochs} epochs each)...")
     lstm = cv_lstm(train_path, n_folds=n_folds, cv_epochs=cv_epochs)
@@ -135,6 +141,10 @@ def main():
     parser.add_argument("--folds", type=int, default=5)
     parser.add_argument("--cv-epochs", type=int, default=20)
     parser.add_argument("--output", default="experiments/statistical_report.txt")
+    parser.add_argument("--tuned", action="store_true",
+                        help="Use nested CV tuning (Optuna) instead of fixed hyperparameters")
+    parser.add_argument("--n-trials", type=int, default=50,
+                        help="Number of Optuna trials per outer fold (only used with --tuned)")
     args = parser.parse_args()
 
     datasets = list(DATASETS.keys()) if args.dataset == "all" else [d.strip() for d in args.dataset.split(",")]
@@ -149,7 +159,7 @@ def main():
     ]
 
     for ds in datasets:
-        lines, _ = _run_dataset(ds, args.folds, args.cv_epochs)
+        lines, _ = _run_dataset(ds, args.folds, args.cv_epochs, tuned=args.tuned, n_trials=args.n_trials)
         all_lines.extend(lines)
 
     report = "\n".join(all_lines)

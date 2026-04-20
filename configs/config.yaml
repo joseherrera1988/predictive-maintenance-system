@@ -56,3 +56,10 @@ time_series_features:
   windows: [5, 10, 20]
   lags: [1, 5, 10]
   ewm_span: 10
+
+tuning:
+  n_trials: 50
+  n_inner_folds: 3
+  metric: recall
+  direction: maximize
+  random_state: 42
