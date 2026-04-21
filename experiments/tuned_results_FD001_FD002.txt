@@ -1,0 +1,97 @@
+Tuned Statistical Analysis -- Partial Results (FD001 + FD002)
+Configuration: 5-fold Group CV | 50 Optuna trials | 3 inner folds | Optimizing: recall
+RF and XGBoost: nested CV with Optuna TPE + 188 time-series features
+LSTM: fixed hyperparameters (hidden=128, layers=2, dropout=0.2, 50 epochs)
+
+================================================================
+Dataset: FD001  (100 engines, single operating condition)
+================================================================
+
+-- Per-fold results --
+
+RF (nested CV, recall-optimized):
+  fold 1: precision=0.9282  recall=0.8968  roc_auc=0.9952  best_inner_recall=0.8909
+  fold 2: precision=0.9442  recall=0.9000  roc_auc=0.9958  best_inner_recall=0.8773
+  fold 3: precision=0.9451  recall=0.8887  roc_auc=0.9968  best_inner_recall=0.8794
+  fold 4: precision=0.9574  recall=0.8710  roc_auc=0.9970  best_inner_recall=0.8861
+  fold 5: precision=0.9355  recall=0.8887  roc_auc=0.9963  best_inner_recall=0.8868
+
+XGBoost (nested CV, recall-optimized):
+  fold 1: precision=0.9230  recall=0.9081  roc_auc=0.9952  best_inner_recall=0.9053
+  fold 2: precision=0.9429  recall=0.9048  roc_auc=0.9950  best_inner_recall=0.8928
+  fold 3: precision=0.9408  recall=0.8968  roc_auc=0.9965  best_inner_recall=0.8986
+  fold 4: precision=0.9523  recall=0.8694  roc_auc=0.9961  best_inner_recall=0.8944
+  fold 5: precision=0.9439  recall=0.8952  roc_auc=0.9964  best_inner_recall=0.8969
+
+LSTM (fixed hyperparameters, 50 epochs):
+  fold 1: precision=0.9273  recall=0.8645  roc_auc=0.9945
+  fold 2: precision=0.9467  recall=0.8597  roc_auc=0.9955
+  fold 3: precision=0.9682  recall=0.8339  roc_auc=0.9957
+  fold 4: precision=0.9136  recall=0.8871  roc_auc=0.9948
+  fold 5: precision=0.9127  recall=0.8935  roc_auc=0.9938
+
+-- Summary (mean +/- std) --
+
+  Model       Precision          Recall             ROC-AUC
+  RF          0.9421 +/- 0.0104  0.8890 +/- 0.0101  0.9962 +/- 0.0007
+  XGBoost     0.9406 +/- 0.0108  0.8949 +/- 0.0149  0.9958 +/- 0.0007
+  LSTM        0.9337 +/- 0.0222  0.8677 +/- 0.0220  0.9949 +/- 0.0007
+
+-- Key observations --
+  - RF and XGBoost dominate LSTM on recall (+0.021 and +0.027 respectively)
+  - Precision and ROC-AUC are comparable across all three models
+  - All three models are highly consistent fold-to-fold (low std)
+  - FD001 is a single operating condition dataset -- relatively easy
+
+
+================================================================
+Dataset: FD002  (260 engines, 6 operating conditions)
+================================================================
+
+-- Per-fold results --
+
+RF (nested CV, recall-optimized):
+  fold 1: precision=0.9414  recall=0.8766  roc_auc=0.9965  best_inner_recall=0.8873
+  fold 2: precision=0.9382  recall=0.8945  roc_auc=0.9963  best_inner_recall=0.8848
+  fold 3: precision=0.9478  recall=0.8778  roc_auc=0.9963  best_inner_recall=0.8866
+  fold 4: precision=0.9356  recall=0.8834  roc_auc=0.9963  best_inner_recall=0.8879
+  fold 5: precision=0.9440  recall=0.8890  roc_auc=0.9966  best_inner_recall=0.8845
+
+XGBoost (nested CV, recall-optimized):
+  fold 1: precision=0.9454  recall=0.8815  roc_auc=0.9967  best_inner_recall=0.8932
+  fold 2: precision=0.9294  recall=0.8908  roc_auc=0.9961  best_inner_recall=0.8903
+  fold 3: precision=0.9352  recall=0.8691  roc_auc=0.9956  best_inner_recall=0.8956
+  fold 4: precision=0.9245  recall=0.8890  roc_auc=0.9957  best_inner_recall=0.8940
+  fold 5: precision=0.9408  recall=0.8970  roc_auc=0.9968  best_inner_recall=0.8897
+
+LSTM (fixed hyperparameters, 50 epochs):
+  fold 1: precision=0.8268  recall=0.8617  roc_auc=0.9875
+  fold 2: precision=0.9706  recall=0.7370  roc_auc=0.9910
+  fold 3: precision=0.8982  recall=0.8319  roc_auc=0.9899
+  fold 4: precision=0.8773  recall=0.8431  roc_auc=0.9897
+  fold 5: precision=0.8010  recall=0.5192  roc_auc=0.8626
+
+-- Summary (mean +/- std) --
+
+  Model       Precision          Recall             ROC-AUC
+  RF          0.9414 +/- 0.0045  0.8843 +/- 0.0073  0.9964 +/- 0.0001
+  XGBoost     0.9351 +/- 0.0082  0.8855 +/- 0.0110  0.9962 +/- 0.0005
+  LSTM        0.8748 +/- 0.0617  0.7586 +/- 0.1292  0.9641 +/- 0.0113
+
+-- Key observations --
+  - LSTM struggles badly on FD002's 6 operating conditions
+  - LSTM fold 5 recall collapsed to 0.519 -- high variance (std=0.129)
+  - RF and XGBoost recall advantage over LSTM widens to +0.126 and +0.127
+  - RF and XGBoost remain extremely stable (std < 0.011 on all metrics)
+  - FD002 is the hardest dataset so far due to mixed operating conditions
+
+
+================================================================
+Cross-dataset trends (FD001 vs FD002)
+================================================================
+  - RF and XGBoost metrics are nearly identical across both datasets
+    suggesting robust generalization to operating condition variation
+  - LSTM performance degrades significantly on FD002 (recall -0.109)
+    pointing to a need for more epochs, architecture tuning, or
+    operating-condition-aware normalization before fair comparison
+  - Statistical significance tests pending completion of FD003/FD004
