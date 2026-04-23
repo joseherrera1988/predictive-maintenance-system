@@ -1,4 +1,4 @@
-# CMAPSS Benchmark Results — RF vs XGBoost vs LSTM
+# CMAPSS Benchmark Results — Random Forest (RF) vs XGBoost vs LSTM
 
 Failure threshold: RUL ≤ 30 cycles. All models evaluated on NASA CMAPSS FD001–FD004.
 
