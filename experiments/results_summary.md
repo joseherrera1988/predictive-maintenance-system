@@ -3,7 +3,6 @@
 Failure threshold: RUL ≤ 30 cycles. All models evaluated on NASA CMAPSS FD001–FD004.
 
 ## Recall 
-"Of all actual failures, how many did we catch?"
 
 | Dataset | RF     | XGBoost | LSTM   |
 |---------|--------|---------|--------|
@@ -13,7 +12,6 @@ Failure threshold: RUL ≤ 30 cycles. All models evaluated on NASA CMAPSS FD001�
 | FD004   | 0.74   | **0.75** | 0.66   |
 
 ## Precision
-"Of predicted failures, how many were correct?"
 
 | Dataset | RF     | XGBoost | LSTM   |
 |---------|--------|---------|--------|
@@ -23,7 +21,6 @@ Failure threshold: RUL ≤ 30 cycles. All models evaluated on NASA CMAPSS FD001�
 | FD004   | **0.929** | 0.909 | 0.854  |
 
 ## ROC-AUC
-"How well does the model separate failures from non-failures across thresholds?"
 
 | Dataset | RF     | XGBoost | LSTM   |
 |---------|--------|---------|--------|
