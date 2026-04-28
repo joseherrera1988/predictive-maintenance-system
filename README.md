@@ -1,12 +1,12 @@
 # Predictive Maintenance System for Industrial Equipment
 
-## What this is
+## What This Is
 
 This project builds and rigorously evaluates a machine learning system for predicting equipment failure using time-series sensor data from NASA’s CMAPSS turbofan engine datasets (FD001–FD004).
 
 It focuses on a core challenge in applied machine learning:
 
-**Do complex deep learning models actually outperform simpler methods under real-world conditions?**
+> **Do complex deep learning models actually outperform simpler methods under real-world conditions?**
 
 The system compares:
 - Random Forest (RF)
