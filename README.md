@@ -199,3 +199,7 @@ pytest tests/ -v
 ## Configuration
 
 Edit `configs/config.yaml` to adjust model hyperparameters, data splits, feature columns, and file paths.
+
+## Author
+
+José Eduardo Herrera. Feedback welcome via GitHub issues.
