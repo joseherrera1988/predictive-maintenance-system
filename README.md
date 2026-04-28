@@ -23,12 +23,12 @@ Predictive maintenance operates in a high-stakes environment:
 - False alarms (false positives) increase maintenance costs.  
 - Systems must generalize across changing operating conditions. 
 
-The key question is not just accuracy. We should also ask **which model is reliable enough to deploy?**
+The key question is not just accuracy. We should also ask **which model is reliable enough to deploy.**
 
 This project evaluates:
-- Whether sequence models (LSTM) are necessary  
-- Whether feature engineering can approximate temporal learning  
-- How models behave under **distribution shift and multi-condition data**
+- Whether sequence models (LSTM) are necessary.  
+- Whether feature engineering can approximate temporal learning.  
+- How models behave under distribution shift and multi-condition data.
 
 ---
 
