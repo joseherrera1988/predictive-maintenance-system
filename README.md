@@ -2,18 +2,18 @@
 
 ## What This Is
 
-This project builds and rigorously evaluates a machine learning system for predicting equipment failure using time-series sensor data from NASA’s CMAPSS turbofan engine datasets (FD001–FD004).
+This project builds and evaluates a machine learning system for predicting equipment failure using time-series sensor data from NASA’s CMAPSS turbofan engine datasets (FD001–FD004).
 
-It focuses on a core challenge in applied machine learning:
+The project addresses a key challenge in applied machine learning:
 
 > **Do complex deep learning models actually outperform simpler methods under real-world conditions?**
 
-The system compares:
+The system evaluates the following models:
 - Random Forest (RF)
 - XGBoost
 - LSTM (sequence model)
 
-under a **nested cross-validation + statistical testing framework** designed to simulate production-like conditions.
+These models are assessed using a **nested cross-validation and statistical testing framework** that simulates production-like conditions.
 
 ## Why This Matters
 
