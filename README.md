@@ -140,7 +140,7 @@ The original benchmark uses a fixed train/test split with default hyperparameter
 
 ### Tuned nested-CV results (5-fold Group CV, 50 Optuna trials, 188 features)
 
-Once RF and XGBoost are tuned with Optuna inside a nested CV loop on the engineered 188-feature set (and CV is grouped by engine to eliminate leakage), the picture flips: **classical ML matches or beats the fixed-hyperparameter LSTM on recall**, and is dramatically more stable.
+After tuning Random Forest (RF) and XGBoost models with Optuna in a nested cross-validation (CV) loop on the engineered 188-feature set, and grouping CV by engine to prevent data leakage, **classical machine learning methods match or surpass the fixed-hyperparameter LSTM model in recall**. They also demonstrate greater stability.
 
 #### FD001 — 100 engines, single operating condition
 
