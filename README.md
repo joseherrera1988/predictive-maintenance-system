@@ -2,20 +2,16 @@
 
 ## Overview
 
-This project builds an end-to-end machine learning system to predict equipment failure using time-series sensor data. It compares Random Forest, XGBoost, and LSTM models on NASA's CMAPSS turbofan engine datasets (FD001–FD004) under a rigorous nested-cross-validation protocol with statistical significance testing.
+This project builds an end-to-end machine learning system to predict equipment failure using time-series sensor data. It compares Random Forest (RF), XGBoost, and LSTM models on NASA’s CMAPSS turbofan engine datasets (FD001–FD004) using a rigorous nested cross-validation protocol with statistical significance testing.
 
 ## Features
 
-- 188 time-series features (rolling mean/std, lags, exponentially weighted moments, cycle percentage)
-- Classical ML models (Random Forest, XGBoost) with Optuna nested-CV hyperparameter tuning
-- LSTM deep-learning model on sliding-window sequences
-- Group K-Fold cross-validation by engine (no engine leakage between folds)
-- Statistical significance tests: Friedman, pairwise Wilcoxon (Bonferroni), paired t-test, McNemar
-- Streamlit dashboard for real-time monitoring
-
-## Tech Stack
-
-Python, Pandas, Scikit-learn, XGBoost, TensorFlow/Keras, Optuna, SciPy, Streamlit
+- 188 time-series features (rolling mean/std, lags, exponentially weighted moments, cycle percentage).
+- Classical ML models (RF, XGBoost) with Optuna nested-CV hyperparameter tuning
+- LSTM deep-learning modelon sliding-window sequences.
+- Group K-Fold cross-validation by engine (no engine leakage between folds).
+- Statistical significance tests: Friedman, pairwise Wilcoxon (Bonferroni), paired t-test, McNemar.
+- Streamlit dashboard for real-time monitoring (in progress).
 
 ## Project Structure
 
@@ -71,11 +67,11 @@ streamlit run dashboards/streamlit_app.py
 
 ## Results
 
-All datasets evaluated on NASA CMAPSS FD001–FD004. Failure threshold: RUL ≤ 30 cycles.
+All datasets were evaluated on NASA CMAPSS FD001–FD004. Failure threshold: RUL ≤ 30 cycles.
 
 ### Baseline benchmark (single train/test split)
 
-The original benchmark uses a fixed train/test split with default hyperparameters. Under this protocol LSTM leads on FD001–FD003.
+The original benchmark uses a fixed train/test split with default hyperparameters. Under this protocol, LSTM leads on FD001–FD003.
 
 #### Recall
 
@@ -106,23 +102,23 @@ The original benchmark uses a fixed train/test split with default hyperparameter
 
 ### Tuned nested-CV results (5-fold Group CV, 50 Optuna trials, 188 features)
 
-Once RF and XGBoost are tuned with Optuna inside a nested CV loop on the engineered 188-feature set — and CV is grouped by engine to eliminate leakage — the picture flips: **classical ML matches or beats the fixed-hyperparameter LSTM on recall**, and is dramatically more stable.
+Once RF and XGBoost are tuned with Optuna inside a nested CV loop on the engineered 188-feature set (and CV is grouped by engine to eliminate leakage), the picture flips: **classical ML matches or beats the fixed-hyperparameter LSTM on recall**, and is dramatically more stable.
 
 #### FD001 — 100 engines, single operating condition
 
-| Model   | Precision         | Recall            | ROC-AUC           |
-| ------- | ----------------- | ----------------- | ----------------- |
-| RF      | 0.9421 ± 0.0104   | 0.8890 ± 0.0101   | **0.9962 ± 0.0007** |
-| XGBoost | 0.9406 ± 0.0108   | **0.8949 ± 0.0149** | 0.9958 ± 0.0007 |
-| LSTM    | 0.9337 ± 0.0222   | 0.8677 ± 0.0220   | 0.9949 ± 0.0007   |
+| Model   | Precision       | Recall              | ROC-AUC             |
+| ------- | --------------- | ------------------- | ------------------- |
+| RF      | 0.9421 ± 0.0104 | 0.8890 ± 0.0101     | **0.9962 ± 0.0007** |
+| XGBoost | 0.9406 ± 0.0108 | **0.8949 ± 0.0149** | 0.9958 ± 0.0007     |
+| LSTM    | 0.9337 ± 0.0222 | 0.8677 ± 0.0220     | 0.9949 ± 0.0007     |
 
 #### FD002 — 260 engines, 6 operating conditions
 
-| Model   | Precision         | Recall            | ROC-AUC           |
-| ------- | ----------------- | ----------------- | ----------------- |
-| RF      | **0.9414 ± 0.0045** | 0.8843 ± 0.0073 | **0.9964 ± 0.0001** |
-| XGBoost | 0.9351 ± 0.0082   | **0.8855 ± 0.0110** | 0.9962 ± 0.0005 |
-| LSTM    | 0.8748 ± 0.0617   | 0.7586 ± 0.1292   | 0.9641 ± 0.0113   |
+| Model   | Precision           | Recall              | ROC-AUC             |
+| ------- | ------------------- | ------------------- | ------------------- |
+| RF      | **0.9414 ± 0.0045** | 0.8843 ± 0.0073     | **0.9964 ± 0.0001** |
+| XGBoost | 0.9351 ± 0.0082     | **0.8855 ± 0.0110** | 0.9962 ± 0.0005     |
+| LSTM    | 0.8748 ± 0.0617     | 0.7586 ± 0.1292     | 0.9641 ± 0.0113     |
 
 Key observations:
 
@@ -135,11 +131,11 @@ Key observations:
 
 5-fold Group CV, α = 0.05. LSTM was skipped in this run (TensorFlow unavailable on the host). Source: `experiments/statistical_report.txt`.
 
-| Dataset | Precision (RF / XGB) | Paired t-test p (corr.) | McNemar p |
-| ------- | -------------------- | ----------------------- | --------- |
-| FD001   | 0.9215 / 0.9002      | **0.0372\***            | 0.7135    |
-| FD002   | 0.9085 / 0.8883      | **0.0002\***            | 0.1333    |
-| FD003   | 0.9150 / 0.9023      | **0.0314\***            | 0.6136    |
+| Dataset | Precision (RF / XGB) | Paired t-test p (corr.) | McNemar p    |
+| ------- | -------------------- | ----------------------- | ------------ |
+| FD001   | 0.9215 / 0.9002      | **0.0372\***            | 0.7135       |
+| FD002   | 0.9085 / 0.8883      | **0.0002\***            | 0.1333       |
+| FD003   | 0.9150 / 0.9023      | **0.0314\***            | 0.6136       |
 | FD004   | 0.9065 / 0.8895      | **0.0001\***            | **0.0015\*** |
 
 \* = p < 0.05.
