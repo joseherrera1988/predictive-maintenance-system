@@ -1,9 +1,11 @@
 # Predictive Maintenance System for Industrial Equipment
 
 ## Overview
+
 This project builds an end-to-end machine learning system to predict equipment failure using time-series sensor data. It compares classical ML models and deep learning approaches to evaluate tradeoffs in performance and interpretability.
 
 ## Features
+
 - Time-series feature engineering (rolling mean, variance, trends)
 - Classical ML models (Random Forest, XGBoost)
 - LSTM-based deep learning model
@@ -11,6 +13,7 @@ This project builds an end-to-end machine learning system to predict equipment f
 - Streamlit dashboard for real-time monitoring
 
 ## Tech Stack
+
 Python, Pandas, Scikit-learn, PyTorch, Streamlit
 
 ## Project Structure
@@ -44,11 +47,11 @@ streamlit run dashboards/streamlit_app.py
 
 ## Training
 
-| Flag | Options | Description |
-|------|---------|-------------|
-| `--train` | filename | Path to train txt file |
-| `--test` | filename | Path to test txt file |
-| `--rul` | filename | Path to RUL txt file |
+| Flag      | Options                  | Description                                                       |
+| --------- | ------------------------ | ----------------------------------------------------------------- |
+| `--train` | filename                 | Path to train txt file                                            |
+| `--test`  | filename                 | Path to test txt file                                             |
+| `--rul`   | filename                 | Path to RUL txt file                                              |
 | `--model` | `ml`, `dl`, `xgb`, `all` | `ml`=Random Forest, `dl`=LSTM, `xgb`=XGBoost, `all`=run all three |
 
 ## Results
@@ -56,28 +59,38 @@ streamlit run dashboards/streamlit_app.py
 Evaluated on NASA CMAPSS FD001–FD004. Failure threshold: RUL ≤ 30 cycles.
 
 ### Recall
-| Dataset | RF     | XGBoost | LSTM   |
-|---------|--------|---------|--------|
-| FD001   | 0.68   | 0.72    | **0.80** |
-| FD002   | 0.90   | 0.93    | **0.97** |
-| FD003   | 0.75   | 0.65    | **0.95** |
-| FD004   | 0.74   | **0.75** | 0.66   |
+
+| Dataset | RF   | XGBoost  | LSTM     |
+| ------- | ---- | -------- | -------- |
+| FD001   | 0.68 | 0.72     | **0.80** |
+| FD002   | 0.90 | 0.93     | **0.97** |
+| FD003   | 0.75 | 0.65     | **0.95** |
+| FD004   | 0.74 | **0.75** | 0.66     |
 
 ### Precision
-| Dataset | RF     | XGBoost | LSTM   |
-|---------|--------|---------|--------|
-| FD001   | 0.944  | **0.947** | 0.909 |
-| FD002   | 0.965  | 0.934   | **0.967** |
-| FD003   | 0.938  | 0.929   | **0.950** |
-| FD004   | **0.929** | 0.909 | 0.854  |
+
+| Dataset | RF        | XGBoost   | LSTM      |
+| ------- | --------- | --------- | --------- |
+| FD001   | 0.944     | **0.947** | 0.909     |
+| FD002   | 0.965     | 0.934     | **0.967** |
+| FD003   | 0.938     | 0.929     | **0.950** |
+| FD004   | **0.929** | 0.909     | 0.854     |
 
 ### ROC-AUC
-| Dataset | RF     | XGBoost | LSTM   |
-|---------|--------|---------|--------|
-| FD001   | 0.974  | 0.970   | **0.990** |
-| FD002   | 0.990  | 0.988   | **0.998** |
-| FD003   | 0.989  | 0.985   | **0.995** |
-| FD004   | **0.979** | **0.979** | 0.977 |
+
+| Dataset | RF        | XGBoost   | LSTM      |
+| ------- | --------- | --------- | --------- |
+| FD001   | 0.974     | 0.970     | **0.990** |
+| FD002   | 0.990     | 0.988     | **0.998** |
+| FD003   | 0.989     | 0.985     | **0.995** |
+| FD004   | **0.979** | **0.979** | 0.977     |
+
+### Summary
+
+- **LSTM leads on FD001–FD003** across recall, precision (FD002/FD003), and ROC-AUC.
+- **FD004 is the hardest dataset** (6 operating conditions + 2 fault modes). LSTM underperforms here on recall (0.66) and precision (0.854); RF and XGBoost are more reliable, with RF the most consistent fallback.
+- **Recall is the priority metric** for predictive maintenance — missing a failure is costlier than a false alarm — so LSTM is preferred for FD001–FD003 and RF/XGBoost for FD004.
+- Full per-run logs and regression metrics (RMSE, MAE, R², NASA score) are tracked in `experiments/logs.csv`; the consolidated benchmark report lives at `experiments/results_summary.md`.
 
 ## Testing
 
