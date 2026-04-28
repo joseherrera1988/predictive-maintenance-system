@@ -15,14 +15,41 @@ The system compares:
 
 under a **nested cross-validation + statistical testing framework** designed to simulate production-like conditions.
 
-## Features
+## Why This Matters
 
-- 188 time-series features (rolling mean/std, lags, exponentially weighted moments, cycle percentage).
-- Classical ML models (RF, XGBoost) with Optuna nested-CV hyperparameter tuning
-- LSTM deep-learning modelon sliding-window sequences.
-- Group K-Fold cross-validation by engine (no engine leakage between folds).
-- Statistical significance tests: Friedman, pairwise Wilcoxon (Bonferroni), paired t-test, McNemar.
-- Streamlit dashboard for real-time monitoring (**in progress**).
+Predictive maintenance operates in a high-stakes environment:
+
+- Missing a failure (false negative) can cause catastrophic system damage.  
+- False alarms (false positives) increase maintenance costs.  
+- Systems must generalize across changing operating conditions. 
+
+The key question is not just accuracy. We should also ask **which model is reliable enough to deploy?**
+
+This project evaluates:
+- Whether sequence models (LSTM) are necessary  
+- Whether feature engineering can approximate temporal learning  
+- How models behave under **distribution shift and multi-condition data**
+
+---
+
+## What This Repository Contains
+
+- A full **time-series feature engineering pipeline** (188 features: rolling stats, lags, EWM, cycle %)
+- Classical ML models (RF, XGBoost) with **Optuna-tuned nested cross-validation**
+- An LSTM sequence model trained on sliding-window sensor data
+- Group K-Fold cross-validation by engine (prevents leakage)
+- A statistical testing suite:
+  - Friedman test  
+  - Pairwise Wilcoxon (Bonferroni corrected)  
+  - Paired t-test  
+  - McNemar’s test  
+- Experiment tracking:
+  - Per-run logs  
+  - Consolidated benchmark tables  
+  - Statistical reports  
+- CLI pipelines for reproducible training, evaluation, and comparison
+- (In progress) Streamlit dashboard for monitoring predictions
+
 
 ## Project Structure
 
