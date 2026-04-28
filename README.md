@@ -11,7 +11,7 @@ This project builds an end-to-end machine learning system to predict equipment f
 - LSTM deep-learning modelon sliding-window sequences.
 - Group K-Fold cross-validation by engine (no engine leakage between folds).
 - Statistical significance tests: Friedman, pairwise Wilcoxon (Bonferroni), paired t-test, McNemar.
-- Streamlit dashboard for real-time monitoring (in progress).
+- Streamlit dashboard for real-time monitoring (**in progress**).
 
 ## Project Structure
 
