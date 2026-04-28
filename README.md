@@ -1,8 +1,19 @@
 # Predictive Maintenance System for Industrial Equipment
 
-## Overview
+## What this is
 
-This project builds an end-to-end machine learning system to predict equipment failure using time-series sensor data. It compares Random Forest (RF), XGBoost, and LSTM models on NASA’s CMAPSS turbofan engine datasets (FD001–FD004) using a rigorous nested cross-validation protocol with statistical significance testing.
+This project builds and rigorously evaluates a machine learning system for predicting equipment failure using time-series sensor data from NASA’s CMAPSS turbofan engine datasets (FD001–FD004).
+
+It focuses on a core challenge in applied machine learning:
+
+**Do complex deep learning models actually outperform simpler methods under real-world conditions?**
+
+The system compares:
+- Random Forest (RF)
+- XGBoost
+- LSTM (sequence model)
+
+under a **nested cross-validation + statistical testing framework** designed to simulate production-like conditions.
 
 ## Features
 
