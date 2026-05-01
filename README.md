@@ -63,12 +63,25 @@ Key design choices:
 - **Multiple metrics (recall, precision, ROC-AUC)** capture different failure modes  
 - **Statistical tests** distinguish real improvements from noise  
 
-A single metric (e.g., ROC-AUC) can hide critical issues.  
-For example:
-- A model may achieve high ROC-AUC but miss failures (low recall)
-- A model may have high average performance but high variance across conditions
+A single metric (e.g., ROC-AUC) can hide critical issues. For example, a model may achieve high ROC-AUC but miss failures (low recall). This project explicitly measures these tradeoffs.
 
-This project explicitly measures these tradeoffs.
+## Current Status
+
+### Completed
+
+- Feature engineering pipeline (188 time-series features)
+- Nested CV + Optuna tuning for RF and XGBoost
+- LSTM baseline with fixed architecture
+- Evaluation on FD001 and FD002 datasets
+- Statistical comparison (RF vs XGBoost across all datasets)
+- Experiment tracking and reproducible CLI workflows
+
+### In Progress
+
+- Tuned LSTM (architecture + training improvements)
+- FD003 / FD004 full nested-CV evaluation
+- Streamlit dashboard for real-time monitoring
+
 ## Project Structure
 
 ```
