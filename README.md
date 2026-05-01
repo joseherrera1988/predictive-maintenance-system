@@ -50,7 +50,25 @@ This project evaluates:
 - CLI pipelines for reproducible training, evaluation, and comparison
 - (In progress) Streamlit dashboard for monitoring predictions
 
+## Why Evaluation-First
 
+The hardest part of applied ML is not building models; instead, it is determining whether improvements are real.
+
+This repository is built on the principle that a rigorous evaluation framework is more valuable than a complex model without measurement.
+
+Key design choices:
+
+- **Nested cross-validation** prevents overfitting during tuning  
+- **Group splits by engine** eliminate data leakage  
+- **Multiple metrics (recall, precision, ROC-AUC)** capture different failure modes  
+- **Statistical tests** distinguish real improvements from noise  
+
+A single metric (e.g., ROC-AUC) can hide critical issues.  
+For example:
+- A model may achieve high ROC-AUC but miss failures (low recall)
+- A model may have high average performance but high variance across conditions
+
+This project explicitly measures these tradeoffs.
 ## Project Structure
 
 ```
