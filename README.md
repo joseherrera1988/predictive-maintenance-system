@@ -30,8 +30,6 @@ This project evaluates:
 - Whether feature engineering can approximate temporal learning.  
 - How models behave under distribution shift and multi-condition data.
 
----
-
 ## What This Repository Contains
 
 - A full **time-series feature engineering pipeline** (188 features: rolling stats, lags, EWM, cycle %)
