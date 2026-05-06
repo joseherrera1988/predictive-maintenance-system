@@ -194,7 +194,7 @@ Key observations:
 - For predictive maintenance, where missing a failure is costlier than a false alarm, recall-optimized RF or XGBoost is the recommended default; LSTM is only competitive once given more epochs, architecture tuning, or operating-condition-aware normalization.
 - Per-run regression metrics (RMSE, MAE, R², NASA score) are tracked in `experiments/logs.csv`; consolidated tables live in `experiments/results_summary.md`; full statistical detail in `experiments/statistical_report.txt` and `experiments/tuned_results_FD001_FD002.txt`.
 
-## Project Structure
+## Repo Structure
 
 ```
 predictive-maintenance-ai/
