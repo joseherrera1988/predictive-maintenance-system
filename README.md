@@ -80,31 +80,6 @@ A single metric (e.g., ROC-AUC) can hide critical issues. For example, a model m
 - FD003 / FD004 full nested-CV evaluation
 - Streamlit dashboard for real-time monitoring
 
-## Project Structure
-
-```
-predictive-maintenance-ai/
-├── configs/config.yaml              # Central configuration
-├── data/raw/                        # Raw CMAPSS txt files
-├── data/processed/                  # Preprocessed data
-├── models/saved_models/             # Serialized trained models
-├── models/metadata.json             # Model registry
-├── experiments/logs.csv             # Per-run experiment tracking
-├── experiments/results_summary.md   # Consolidated benchmark tables
-├── experiments/statistical_report.txt       # Significance tests across FD001–FD004
-├── experiments/tuned_results_FD001_FD002.txt # Nested-CV + Optuna results
-├── src/feature_engineering.py       # 188-feature time-series pipeline
-├── src/cross_validate.py            # Group K-Fold CV
-├── src/nested_cv.py                 # Nested CV + Optuna tuning
-├── src/statistical_tests.py         # Friedman / Wilcoxon / t-test / McNemar
-├── src/                             # Loaders, training, evaluation, etc.
-├── dashboards/streamlit_app.py
-├── tests/                           # Unit, integration, performance tests
-├── main_cmapss.py                   # CMAPSS CLI entry point
-├── run_statistical_analysis.py      # Full benchmark + significance CLI
-└── main.py                          # Generic CLI entry point
-```
-
 ## Quickstart
 
 ```bash
@@ -218,6 +193,31 @@ Key observations:
 - **RF beats XGBoost on precision with statistical significance on all four datasets**; ROC-AUC is statistically indistinguishable between the two.
 - For predictive maintenance, where missing a failure is costlier than a false alarm, recall-optimized RF or XGBoost is the recommended default; LSTM is only competitive once given more epochs, architecture tuning, or operating-condition-aware normalization.
 - Per-run regression metrics (RMSE, MAE, R², NASA score) are tracked in `experiments/logs.csv`; consolidated tables live in `experiments/results_summary.md`; full statistical detail in `experiments/statistical_report.txt` and `experiments/tuned_results_FD001_FD002.txt`.
+
+## Project Structure
+
+```
+predictive-maintenance-ai/
+├── configs/config.yaml              # Central configuration
+├── data/raw/                        # Raw CMAPSS txt files
+├── data/processed/                  # Preprocessed data
+├── models/saved_models/             # Serialized trained models
+├── models/metadata.json             # Model registry
+├── experiments/logs.csv             # Per-run experiment tracking
+├── experiments/results_summary.md   # Consolidated benchmark tables
+├── experiments/statistical_report.txt       # Significance tests across FD001–FD004
+├── experiments/tuned_results_FD001_FD002.txt # Nested-CV + Optuna results
+├── src/feature_engineering.py       # 188-feature time-series pipeline
+├── src/cross_validate.py            # Group K-Fold CV
+├── src/nested_cv.py                 # Nested CV + Optuna tuning
+├── src/statistical_tests.py         # Friedman / Wilcoxon / t-test / McNemar
+├── src/                             # Loaders, training, evaluation, etc.
+├── dashboards/streamlit_app.py
+├── tests/                           # Unit, integration, performance tests
+├── main_cmapss.py                   # CMAPSS CLI entry point
+├── run_statistical_analysis.py      # Full benchmark + significance CLI
+└── main.py                          # Generic CLI entry point
+```
 
 ## Testing
 
